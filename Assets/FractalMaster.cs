@@ -6,15 +6,17 @@ public class FractalMaster : MonoBehaviour {
     public ComputeShader fractalShader;
 
     [Range (1, 20)]
-    public float fractalPower = 10;
-    public float darkness = 70;
+    // public float fractalPower = 10;
+    // so that it starts from 
+    public float fractalPower = 1;
+    public float darkness = 90;
 
     [Header ("Colour mixing")]
     [Range (0, 1)] public float blackAndWhite;
     [Range (0, 1)] public float redA;
-    [Range (0, 1)] public float greenA;
-    [Range (0, 1)] public float blueA = 1;
-    [Range (0, 1)] public float redB = 1;
+    [Range (0, 1)] public float greenA = 0f;
+    [Range (0, 1)] public float blueA = 1f;
+    [Range (0, 1)] public float redB = 1f;
     [Range (0, 1)] public float greenB;
     [Range (0, 1)] public float blueB;
 
@@ -23,7 +25,7 @@ public class FractalMaster : MonoBehaviour {
     Light directionalLight;
 
     [Header ("Animation Settings")]
-    public float powerIncreaseSpeed = 0.2f;
+    public float powerIncreaseSpeed = 0.02f;
 
     void Start() {
         Application.targetFrameRate = 60;
@@ -38,6 +40,13 @@ public class FractalMaster : MonoBehaviour {
     void Update () {
         if (Application.isPlaying) {
             fractalPower += powerIncreaseSpeed * Time.deltaTime;
+
+            // mimics the sunrise, greenish vibe when application starts
+            if (greenA <= 1)
+                this.greenA += 0.001f;
+            // mimics the afternoon, incorporating yellowish vibe
+            if (greenA >= 1 && greenB <= 1)
+                this.greenB += 0.001f;
         }
     }
 
@@ -77,4 +86,5 @@ public class FractalMaster : MonoBehaviour {
             target.Create ();
         }
     }
+
 }
