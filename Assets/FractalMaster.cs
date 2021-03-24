@@ -44,9 +44,17 @@ public class FractalMaster : MonoBehaviour {
             // mimics the sunrise, greenish vibe when application starts
             if (greenA <= 1)
                 this.greenA += 0.001f;
-            // mimics the afternoon, incorporating yellowish vibe
+
             if (greenA >= 1 && greenB <= 1)
                 this.greenB += 0.001f;
+
+            //mimics the afternoon, incorporating yellowish vibe
+            if (greenB >= 1 && blueA >= 0.5)
+                this.blueA -= 0.0005f;
+
+            //mimics the late afternoon (sunset)
+            if (blueA <= 0.5 && redA <= 1)
+                this.redA += 0.001f;
         }
     }
 
