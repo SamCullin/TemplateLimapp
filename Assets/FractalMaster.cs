@@ -10,6 +10,7 @@ public class FractalMaster : MonoBehaviour {
     // so that it starts from 
     public float fractalPower = 1;
     public float darkness = 90;
+    public float secondsCounter;
 
     [Header ("Colour mixing")]
     [Range (0, 1)] public float blackAndWhite;
@@ -34,6 +35,7 @@ public class FractalMaster : MonoBehaviour {
     void Init () {
         cam = Camera.current;
         directionalLight = FindObjectOfType<Light> ();
+        this.secondsCounter = Time.timeSinceLevelLoad;
     }
 
     // Animate properties
@@ -41,20 +43,60 @@ public class FractalMaster : MonoBehaviour {
         if (Application.isPlaying) {
             fractalPower += powerIncreaseSpeed * Time.deltaTime;
 
-            // mimics the sunrise, greenish vibe when application starts
-            if (greenA <= 1)
-                this.greenA += 0.001f;
+            Debug.Log("current second is " + secondsCounter);
 
-            if (greenA >= 1 && greenB <= 1)
-                this.greenB += 0.001f;
+            if (secondsCounter <= 10)
+            {
+                Debug.Log("sunrise starts");
+                // mimics the sunrise, greenish vibe when application starts
+                if (greenA <= 1)
+                    this.greenA += 0.005f;
 
-            //mimics the afternoon, incorporating yellowish vibe
-            if (greenB >= 1 && blueA >= 0.5)
-                this.blueA -= 0.0005f;
+                if (greenA >= 1 && greenB <= 1)
+                    this.greenB += 0.005f;
+                
+            }
 
-            //mimics the late afternoon (sunset)
-            if (blueA <= 0.5 && redA <= 1)
-                this.redA += 0.001f;
+            if (secondsCounter > 10 && secondsCounter <= 20) 
+            {
+                Debug.Log("afternoon starts");
+                //mimics the afternoon, incorporating yellowish vibe
+                if (greenB >= 1 && blueA >= 0.5)
+                this.blueA -= 0.005f;
+            }
+
+            if( secondsCounter > 20 && secondsCounter <= 30)
+            {
+                Debug.Log("sunset starts");
+                //mimics the late afternoon (sunset)
+                if (blueA <= 0.5 && redA <= 1)
+                    this.redA += 0.005f;
+            }
+
+            
+            if (secondsCounter > 30 && secondsCounter <= 40)
+            {
+                Debug.Log("evening starts");
+                // mimics the evening
+                if(blueB <= 1)
+                this.blueB += 0.005f;
+
+                if (blueB >= 1 && redA >= 0.5)
+                    this.redA -= 0.005f;
+            }
+
+            if (secondsCounter > 40)
+            {
+                Debug.Log("late evening starts");
+                // mimics the late night
+                if (redA >= 0.15)
+                    this.redA -= 0.005f;
+
+                if (redA <= 0.15 && blueA <= 1)
+                    this.blueA += 0.005f;
+                
+            } 
+            
         }
     }
 
