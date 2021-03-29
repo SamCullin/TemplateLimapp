@@ -8,7 +8,6 @@ public class FractalMaster : MonoBehaviour {
     [Range (1, 20)]
     public float fractalPower = 1;
     public float darkness = 90;
-    //public float secondsCounter;
 
     [Header ("Colour mixing")]
     [Range (0, 1)] public float blackAndWhite;
@@ -137,6 +136,18 @@ public class FractalMaster : MonoBehaviour {
 
             if (redA <= 0.15 && blueA <= 1)
                 this.blueA += 0.005f;
+
+        }
+
+        if (seconds > 50 && seconds <= 60)
+        {
+            Debug.Log("dawn starts");
+            // mimics the dawn;
+            if (redA <= 1)
+                this.redA += 0.005f;
+
+            if (redA >= 1 && greenA >= 0)
+                this.greenA -= 0.005f;
 
         }
     }

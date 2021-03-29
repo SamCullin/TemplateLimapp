@@ -10,15 +10,17 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         MakeGameManager();
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
         
-        this.secondsCounter = Time.timeSinceLevelLoad;
+
     }
 
+    
     void MakeGameManager()
     {
         // implementing singleton pattern with this class
@@ -31,7 +33,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        this.secondsCounter = Time.timeSinceLevelLoad;
     }
 
     public float GetSeconds()
