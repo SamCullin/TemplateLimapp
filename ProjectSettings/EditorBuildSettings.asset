@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Examples/Scenes/Main.unity
+  - enabled: 0
+    path: Assets/Examples/Scenes/Example.unity
     guid: 17d10320f148ee64488837d5f8008cfd
+  - enabled: 1
+    path: Assets/Fractal/Mandelbulb/MandelBulbVR.unity
+    guid: 6e38c08b4c1b70b4bbd2c4282a8e2e83
   m_configObjects: {}
