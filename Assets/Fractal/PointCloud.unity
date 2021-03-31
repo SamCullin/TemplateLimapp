@@ -146,7 +146,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 243188719}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 341364157}
@@ -177,12 +177,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3881d082aa259f84a83672a0d8577bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleCount: 1000000
-  power: 1
-  enableFog: 1
+  particleCount: 30000
+  power: -22.78
+  enableFog: 0
   enableShadows: 1
   enableColor: 1
-  enableCutOff: 1
+  enableCutOff: 0
   material: {fileID: 2100000, guid: 1d5530414192d0143bd0b3a1ac39eda9, type: 2}
   computeShader: {fileID: 7200000, guid: 98d7c5a88a013a64cbf1b07431d58cf9, type: 3}
   camPos: {fileID: 428731758}
@@ -192,7 +192,7 @@ MonoBehaviour:
   _jitter: 0
   _fogAmount: 0.1
   _Color: {r: 6.406047, g: 0.18130326, b: 3.8533628, a: 1}
-  numBuffers: 1
+  numBuffers: 10
   activeBuffer: 0
   AO1: 1
   AO2: 1

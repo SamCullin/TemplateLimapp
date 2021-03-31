@@ -142,6 +142,9 @@ public class MultibufferParticles : MonoBehaviour
 		Quaternion q =  Quaternion.Inverse(transform.rotation) * camPos.rotation;
 
 		computeShader.SetVector("camQRot", new Vector4(q.x, q.y, q.z, q.w));
+
+
+
 		computeShader.SetFloat("scale", transform.localToWorldMatrix.GetScale().x );
 
 		computeShader.SetFloat("_Threshold", _Threshold);

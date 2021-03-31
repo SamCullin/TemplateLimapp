@@ -45,7 +45,7 @@ float2 mandelbulb(float3 position)
     float r = 0.0;
     int iterations = 0;
 
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 8; i++) {
         iterations = i;
         r = length(z);
 
@@ -68,7 +68,7 @@ float2 mandelbulb(float3 position)
         z += position;
     }
     float dst = 0.5 * log(r) * r / dr;
-    return float2(iterations, dst * 1);
+    return float2( dst * 1, iterations);
 }
 
 
@@ -140,5 +140,5 @@ float2 hartverdrahtet(float3 f)
 
 float2 DE(float3 d)
 {
-	return mandelbulb(d);
+	return tglad(d);
 }
