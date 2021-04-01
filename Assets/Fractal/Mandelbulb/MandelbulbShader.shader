@@ -5,12 +5,17 @@
         _MainTex ("Texture", 2D) = "white" {}
         _Fov("Fov", Float) = 1.1
         _AmbientLight("Ambient Light", Float) = 0.3
-        _Color("Color", Color) = (1,1,1,1)
+        _ColorPrimary("Color Primary", Color) = (1,1,1,1)
+        _ColorSecondary("Color Secondary", Color) = (1,1,1,1)
+        _Glow("Glow Color", Color) = (1,1,1,1)
+        
         _Gloss("Gloss", Float) = 1
         _NumRayMarchSteps("Ray steps", Int) = 20
         _NumIterations("Iterations", Int) = 8
         _Exponent("Exponent", Float) = 8
         _Position("Position", Vector) = ( 0, 0, 0 )
+        _MinDistance("Min Distance", Float) = 0.0001
+        _MaxDistance("Max Distance", Float) = 10
        
     }
     SubShader
@@ -38,6 +43,11 @@
             int			_NumRayMarchSteps;
             float		_Fov;
             float3      _Position;
+            float _MinDistance;
+            float _MaxDistance;
+            float4 _ColorPrimary;
+            float4 _ColorSecondary;
+            float4 _Glow;
 
             #include "utility.cginc"
             #include "distanceFunctions.cginc"
@@ -66,6 +76,7 @@
             float4 _Color;
             float _Gloss;
             float _AmbientLight;
+         
             
 
             VertexOutput vert (VertexInput v)
@@ -83,38 +94,36 @@
             }
 
 
-            float raymarch(float3 raySrc, float3 rayDirection, float4 pos)
+            float4 raymarch(float3 raySrc, float3 rayDirection, float3 pos, float maxDistance)
             {
                 const float minimumDistance = 0.0001;
-                float3 p = raySrc - pos.xyz;
-                bool hit = false;
+                float3 p = raySrc - pos;
+                bool hit = -1;
                 float distanceStepped = 0.0;
-                int steps;
+                int steps = 0;
 
-                for (steps = 0; steps < _NumRayMarchSteps; steps++)
+                while (steps < _NumRayMarchSteps && distanceStepped < maxDistance)
                 {
-                    float d = DE(p);
-                    distanceStepped += d;
+                    steps = steps + 1;
+                    float3 distanceMeta = DE(p);
+                    distanceStepped += distanceMeta.x;
 
-                    if (d < minimumDistance) {
-                        hit = true;
+                    if (distanceMeta.x < _MinDistance) {
+                        hit = 1;
                         break;
                     }
-                    else if (distanceStepped > distance( raySrc , _Position) * 2 ) {
+                    else if (distanceStepped > maxDistance) {
+                        hit = 0;
                         break;
                     }
 
-                    p += d * rayDirection;
+                    p += distanceMeta.x * rayDirection;
                 }
 
-                float greyscale = 1 - (steps / (float)_NumRayMarchSteps);
-                //if (greyscale < 0.1) {
-                //	return float4(0, 0, 0, 0);
-                //}
-                if (!hit) {
-                    return -1.0;
-                }
-                return distanceStepped;
+                float greyscale = (steps / (float)_NumRayMarchSteps);
+                float4 rayMarchMeta = float4(distanceStepped, greyscale, hit, 0);
+                return rayMarchMeta;
+
             }
 
             // Find ray direction through the current pixel in camera space (LHS, camera looks down +Z)
@@ -164,35 +173,84 @@
             }
 
 
+            float mapFloat(float input) {
+                float z = -2;
+                float a = 0.3;
+                float b = 0.3;
+                return a * pow(input + z, 3) + b * pow(input + z, 2);
+            }
 
-
-            float4 frag(VertexOutput i, out float outDepth: SV_Depth) : SV_Target
+            float4 frag(VertexOutput i, out float outDepth : SV_Depth) : SV_Target
             {
-
+                float3 normal = normalize(i.normal);
                 float3 rayOrigin = i.rayOrigin;
                 float3 rayDir = normalize(i.rayDir);
                 float3 spherePos = unity_ObjectToWorld._m03_m13_m23;
+                float maxDistance = distance(rayOrigin, spherePos) + 2;
 
-                float rayHit = raymarch(rayOrigin, rayDir, float4(spherePos, 0.5));
+                float4 rayHit = raymarch(rayOrigin, rayDir, float3(spherePos), maxDistance);
 
-                clip(rayHit);
+                clip(rayHit.x);
 
-                float3 worldPos = rayDir * rayHit + rayOrigin;
+                float3 worldPos = rayDir * rayHit.x + rayOrigin;
+                float3 maxPos = rayDir * maxDistance + rayOrigin;
+                float posDistance = distance(worldPos, maxPos);
                 float3 worldNormal = normalize(worldPos - spherePos);
 
-                // basic lighting
-                half3 worldLightDir = _WorldSpaceLightPos0.xyz;
+                 
+
+                //// Global Light
+                float3 worldLightColor = _LightColor0.rgb;
+                float3 worldLightDir = _WorldSpaceLightPos0.xyz;
+
                 half ndotl = saturate(dot(worldNormal, worldLightDir));
-                half3 lighting = _LightColor0 * ndotl;
+                half3 directDiffuseLight = worldLightColor * ndotl;
 
                 // ambient lighting
-                half3 ambient = ShadeSH9(float4(worldNormal, 1));
-                lighting += ambient;
+                // half3 ambient = ShadeSH9(float4(worldNormal, 1));
+                float3 ambientLight = worldLightColor * _AmbientLight;
 
-                float4 clipPos = UnityWorldToClipPos(worldPos);
-                outDepth = clipPos.z / clipPos.w;
 
-                return half4(lighting, 1);
+                //// Direct specular Light
+                //// Phong
+
+                float3 directSpecular = float3(0, 0, 0);
+                if (_Gloss > 0) {
+                    float3 viewReflect = reflect(rayDir, normal);
+                    float3 specularFalloff = max(0, dot(viewReflect, worldLightDir));
+                    specularFalloff = pow(specularFalloff, _Gloss);
+                    float3 directSpecular = specularFalloff * worldNormal;
+                }
+
+
+
+
+
+                float4 fractalColor;
+                if (rayHit.z > 0) {
+                    float3 color = lerp(_ColorPrimary, _ColorSecondary,  rayHit.y);
+          
+                    fractalColor = float4(color, 1);
+                }
+                else {
+                    fractalColor = float4(_Glow.xyz * rayHit.y, _Glow.w);
+                    fractalColor.w *= rayHit.y;
+                    fractalColor.w += mapFloat(rayHit.y);
+                }
+
+                
+                // Composit
+                float3 diffuseLight = ambientLight + directDiffuseLight;
+                float3 finalSurfaceColor = diffuseLight * fractalColor.xyz + directSpecular;
+                
+
+
+                //float4 clipPos = UnityWorldToClipPos(worldPos);
+                //outDepth = clipPos.z / clipPos.w;
+
+                //fractalColor = float3(0, clipPos.w, 0);
+
+                return float4(finalSurfaceColor, fractalColor.w);// half4(fractalColor, 1);
 
 
 
@@ -210,9 +268,7 @@
                 //// return float4(i.worldPos, 0);
                 //float3 normal = normalize(i.normal);
 
-                //// Global Light
-                //float3 lightColor = _LightColor0.rgb;
-                //float3 lightDir = _WorldSpaceLightPos0.xyz;
+               
 
                 ////Direct Light
                 //float lightFalloff = max(0, dot(lightDir,normal));

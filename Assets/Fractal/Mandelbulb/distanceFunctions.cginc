@@ -4,12 +4,12 @@
 
 
 // distance estimator for the mandelbulb	
-float de_mandelbulb(float3 c)
+float3 de_mandelbulb(float3 c)
 {
 	// i believe that similar to the mandelbrot, the mandelbulb is enclosed in a sphere of radius 2 (hence the delta) 
 	const float delta = 2;
 
-	bool converges = true; // unused
+	float converges = 1; // unused
 	float divergenceIter = 0; // unused
 	float3 p = c;
 	float dr = 2.0, r = 1.0;
@@ -40,7 +40,7 @@ float de_mandelbulb(float3 c)
 		// check for divergence
 		if (length(p) > delta) {
 			divergenceIter = ii;
-			converges = false;
+			converges = 0;
 			break;
 		}
 	}
@@ -48,10 +48,10 @@ float de_mandelbulb(float3 c)
 	// TODO: Return more info about the point 
 	// float3x2 = float3x2(float3())
 
-	return dis; // Greens formula
+	return float3(dis, ii , converges); // Greens formula
 }
 
-float DE(float3 d)
+float3 DE(float3 d)
 {
 	return de_mandelbulb(d);
 }
