@@ -1081,12 +1081,34 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 817017366}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae82c171eae8dcb47828782d6e8d61fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fractal: {fileID: 2100000, guid: 69fda97244d47d04cbddc65502fe9105, type: 2}
+  Exponent:
+    enabled: 1
+    materialValue: _Exponent
+    startValue: 3
+    endValue: 40
+  PrimaryColor:
+    enabled: 1
+    materialValue: _ColorPrimary
+    startValue: {r: 1, g: 0, b: 0.20228004, a: 0}
+    endValue: {r: 1, g: 0.6671711, b: 0, a: 0}
+  SecondaryColor:
+    enabled: 1
+    materialValue: _ColorSecondary
+    startValue: {r: 0, g: 0.12710404, b: 1, a: 1}
+    endValue: {r: 0.7065897, g: 0, b: 1, a: 0}
+  GlowColor:
+    enabled: 1
+    materialValue: _Glow
+    startValue: {r: 1, g: 0.9623431, b: 0, a: 1}
+    endValue: {r: 1, g: 0.9623431, b: 0, a: 0.20784314}
+  mat: {fileID: 2100000, guid: 69fda97244d47d04cbddc65502fe9105, type: 2}
+  speed: 0.1
+  fractalMotion: 0
 --- !u!1 &828242024
 GameObject:
   m_ObjectHideFlags: 0
