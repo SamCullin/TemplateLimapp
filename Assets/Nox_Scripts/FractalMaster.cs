@@ -139,17 +139,5 @@ public class FractalMaster : MonoBehaviour {
                 this.blueA += 0.005f;
 
         }
-
-        if (seconds > 50 && seconds <= 60)
-        {
-            Debug.Log("dawn starts");
-            // mimics the dawn;
-            if (redA <= 1)
-                this.redA += 0.005f;
-
-            if (redA >= 1 && greenA >= 0)
-                this.greenA -= 0.005f;
-
-        }
     }
 }

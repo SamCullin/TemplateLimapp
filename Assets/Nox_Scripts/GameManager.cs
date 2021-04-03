@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         
-        
+        this.secondsCounter = Time.timeSinceLevelLoad;
     }
 
     void MakeGameManager()
@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.secondsCounter = Time.timeSinceLevelLoad;
+        
     }
 
     public float GetSeconds()
