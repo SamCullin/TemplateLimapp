@@ -75,5 +75,14 @@ namespace Liminal.Examples
         {
             Cube.localScale = Vector3.one * Random.Range(0.1f, 0.35F);
         }
+
+Material[] materials = (Material[]) Resources.LoadAll("Materials");
+
+        public void ChangeBubColor()
+        {
+            Cube.GetComponent<Renderer>().material = materials[Random.Range(1, 3)];
+        }
+
+
     }
 }
